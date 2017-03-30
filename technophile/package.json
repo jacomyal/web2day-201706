@@ -1,0 +1,16 @@
+{
+  "name": "technophile",
+  "version": "1.0.0",
+  "main": "main.html",
+  "author": "Alexis Jacomy",
+  "license": "MIT",
+  "scripts": {
+    "start": "kotatsu serve src/index.js"
+  },
+  "devDependencies": {
+    "kotatsu": "^0.15.0"
+  },
+  "dependencies": {
+    "three": "^0.84.0"
+  }
+}
