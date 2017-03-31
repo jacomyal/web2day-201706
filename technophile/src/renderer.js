@@ -1,6 +1,7 @@
-import { WebGLRenderer } from 'three';
+import { WebGLRenderer, Vector3 } from 'three';
 import camera from './camera';
 import scene from './scene'
+import { SIZE, CENTER, ORIGIN } from './consts';
 
 // No body scrolling:
 document.body.style.overflow = 'hidden';
@@ -10,15 +11,15 @@ document.body.style.padding = 0;
 // Initialize DOM container:
 const container = document.getElementById('app');
 container.style.position = 'absolute';
-container.style.background = '#fc0';
 ['top', 'left', 'right', 'bottom'].forEach(str => container.style[str] = 0);
 
 // Initialize renderer:
-const renderer = new WebGLRenderer();
+const renderer = new WebGLRenderer({ alpha: true });
 container.appendChild(renderer.domElement);
 
 // Deal with rendering:
 function _render() {
+  renderer.clear();
   renderer.render(scene, camera);
 }
 
@@ -31,5 +32,23 @@ function _resize() {
 }
 window.addEventListener('resize', _resize);
 _resize();
+
+// Make the camera move:
+function _moveCamera() {
+  const t = +Date.now() * 2 * Math.PI / 5000;
+  const direction = new Vector3(
+    SIZE * 1.5 * Math.cos(Math.cos(t) / 2 + Math.PI / 4),
+    SIZE * 1.5 * Math.sin(Math.cos(t) / 2 + Math.PI / 4),
+    SIZE
+  );
+  const position = CENTER.clone().add(direction);
+
+  camera.position.set(...position.toArray());
+  camera.lookAt(CENTER);
+  _render();
+
+  requestAnimationFrame(_moveCamera);
+}
+_moveCamera();
 
 export default renderer;

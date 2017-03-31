@@ -3,20 +3,23 @@ export default {
     {
       id: 'origin',
       label: 'How did you learn to create data visualization?',
-      values: {
-        self: {
+      values: [
+        {
+          id: 'self',
           label: 'Mostly Self-Taught',
           color: '#bf5746'
         },
-        both: {
+        {
+          id: 'both',
           label: 'Equal Parts School and Self-Taught',
           color: '#9559b7'
         },
-        school: {
+        {
+          id: 'school',
           label: 'Mostly from School',
           color: '#668f43'
         }
-      }
+      ]
     },
     {
       id: 'experience',

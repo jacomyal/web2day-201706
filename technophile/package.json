@@ -1,7 +1,7 @@
 {
   "name": "technophile",
   "version": "1.0.0",
-  "main": "main.html",
+  "main": "src/index.js",
   "author": "Alexis Jacomy",
   "license": "MIT",
   "scripts": {
