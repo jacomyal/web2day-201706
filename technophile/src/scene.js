@@ -38,7 +38,7 @@ scene.add(camera);
 });
 
 // Generate sprites:
-const radius = 4;
+const radius = 8;
 const sprites = {};
 data.cols[COLOR].values.forEach(({ id, color }) => {
   sprites[id] = getCircleSprite(radius, color);
@@ -52,6 +52,7 @@ data.rows.forEach(arr => {
     arr[Y] / extrema[Y].max * SIZE,
     arr[Z] / extrema[Z].max * SIZE
   );
+  sprite.scale.set(2, 2, 1);
   scene.add(sprite);
 });
 
