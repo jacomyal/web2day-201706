@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Démo metaballs</title>
+  <meta charset="UTF-8">
+  <style type="text/css">
+    /* DISPLAY THE BALLS */
+    body,
+    #container {
+      margin: 0;
+      padding: 0;
+      background: black;
+      overflow: hidden;
+    }
+    #container {
+      top: 50%;
+      left: 50%;
+      width: 800px;
+      height: 800px;
+      position: absolute;
+      margin-top: -400px;
+      margin-left: -400px;
+    }
+    .ball {
+      top: 50%;
+      left: 50%;
+      margin: -50px;
+      width: 100px;
+      height: 100px;
+      position: absolute;
+      border-radius: 50%;
+      background: white;
+    }
+
+    /* ACTUAL FILTERS CODE */
+    .ball {
+      filter: blur(25px);
+    }
+    #container {
+      filter: contrast(100);
+    }
+
+    /* ANIAMTIONS */
+    #container {
+      transform-origin: 50% 50%;
+      animation: rotate 12s infinite alternate linear;
+    }
+    .ball {
+      animation: move 12s infinite alternate ease-in-out;
+    }
+    .ball:nth-child(1) { animation-delay: 1s; }
+    .ball:nth-child(2) { animation-delay: 2s; }
+    .ball:nth-child(3) { animation-delay: 3s; }
+    .ball:nth-child(4) { animation-delay: 4s; }
+    .ball:nth-child(5) { animation-delay: 5s; }
+    @keyframes move {
+      0%   { top: 50%; left: 50%; }
+      20%  { top: 25%; left: 55%; }
+      40%  { top: 65%; left: 25%; }
+      60%  { top: 35%; left: 65%; }
+      80%  { top: 75%; left: 35%; }
+      100% { top: 45%; left: 75%; }
+    }
+    @keyframes rotate {
+      from { transform: rotate(0deg);   }
+      to   { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <div id="container">
+    <div class="ball"></div>
+    <div class="ball"></div>
+    <div class="ball"></div>
+    <div class="ball"></div>
+    <div class="ball"></div>
+    <div class="ball"></div>
+  </div>
+</body>
+</html>
