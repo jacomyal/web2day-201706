@@ -8,6 +8,6 @@
     "start": "kotatsu serve src/index.js"
   },
   "devDependencies": {
-    "kotatsu": "^0.15.0"
+    "kotatsu": "^0.15.2"
   }
 }
