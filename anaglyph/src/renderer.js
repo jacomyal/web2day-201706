@@ -1,5 +1,4 @@
-import { WebGLRenderer, Vector3 } from 'three';
-import camera from './camera';
+import { WebGLRenderer, PerspectiveCamera, Vector3 } from 'three';
 import scene from './scene'
 import { SIZE, CENTER, ORIGIN } from './consts';
 
@@ -16,6 +15,11 @@ container.style.position = 'absolute';
 // Initialize renderer:
 const renderer = new WebGLRenderer({ alpha: true });
 container.appendChild(renderer.domElement);
+
+// Initialize camera:
+const camera = new PerspectiveCamera(45, 1, 0.1, 10000);
+camera.up.set(0, 0, 1);
+scene.add(camera);
 
 // Deal with rendering:
 function _render() {

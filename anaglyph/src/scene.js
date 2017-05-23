@@ -1,59 +1,57 @@
 import * as THREE from 'three';
-import camera from './camera';
-import data from './data';
-import { getCircleSprite } from './utils';
-import { X, Y, Z, COLOR, ORIGIN, SIZE } from './consts';
+import { ORIGIN, SIZE } from './consts';
 
-// Find extrema:
-const extrema = {};
-[X, Y, Z].forEach(i => {
-  extrema[i] = { min: Infinity, max: -Infinity };
-});
-data.rows.forEach(arr => {
-  [X, Y, Z].forEach(i => {
-    extrema[i].min = Math.min(extrema[i].min, arr[i]);
-    extrema[i].max = Math.max(extrema[i].max, arr[i]);
-  });
-});
+const DATA = [2, 5, 11, 3, 79];
 
 // Initialize scene:
 const scene = new THREE.Scene();
-scene.add(camera);
 
-// Draw caption:
-[0, 1, 2].forEach(dim => {
-  const target = new THREE.Vector3(
-    ...[0, 0, 0].map((_, i) => i === dim ? SIZE : 0)
+const light = new THREE.SpotLight();
+light.castShadow = true;
+light.position.set(-170, 300, 100);
+scene.add(light);
+
+const ambientLight = new THREE.PointLight(0x123456);
+ambientLight.position.set(20, 150, -120);
+scene.add(ambientLight);
+
+// Add pie chart:
+const total = DATA.reduce((a, b) => a + b);
+
+let acc = 0;
+DATA.forEach(val => {
+  const angle = 2 * Math.PI * val / total;
+
+  const material = new THREE.MeshPhongMaterial({
+    color: '#' + ((1 << 24) * Math.random() | 0).toString(16),
+  });
+
+  const geometry = new THREE.Shape();
+  geometry.moveTo(0, 0);
+  geometry.arc(0, 0, 40, acc, acc + angle, false);
+  geometry.lineTo(0, 0);
+
+  const extruded = new THREE.ExtrudeGeometry(
+    geometry,
+    {
+      amount: Math.random() * 40 + 10,
+      bevelEnabled: false,
+      curveSegments: 50,
+      steps: 2,
+    }
   );
+  extruded.dynamic = true
+  extruded.verticesNeedUpdate = true;
+  extruded.normalsNeedUpdate = true;
+  extruded.computeFaceNormals();
+  extruded.computeBoundingSphere();
 
-  const geom = new THREE.Geometry();
-  geom.vertices.push(ORIGIN);
-  geom.vertices.push(target);
-  scene.add(
-    new THREE.Line(
-      geom,
-      new THREE.LineBasicMaterial({ color: 0x000000 })
-    )
-  );
-});
+  const segment = new THREE.Mesh(extruded, material);
+  segment.rotation.x = Math.PI / 2;
 
-// Generate sprites:
-const radius = 8;
-const sprites = {};
-data.cols[COLOR].values.forEach(({ id, color }) => {
-  sprites[id] = getCircleSprite(radius, color);
-});
+  scene.add(segment);
 
-// Draw particules:
-data.rows.forEach(arr => {
-  const sprite = new THREE.Sprite(sprites[arr[COLOR]]);
-  sprite.position.set(
-    arr[X] / extrema[X].max * SIZE,
-    arr[Y] / extrema[Y].max * SIZE,
-    arr[Z] / extrema[Z].max * SIZE
-  );
-  sprite.scale.set(2, 2, 1);
-  scene.add(sprite);
+  acc += angle;
 });
 
 export default scene;
