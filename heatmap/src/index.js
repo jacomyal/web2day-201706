@@ -13,13 +13,3 @@ DATA.forEach(([ vx, vy ]) => {
 
   POINTS.appendChild(point);
 });
-
-// Gére le rendu "responsive" :
-const CONTAINER = document.getElementById('app');
-function resize() {
-  const size = Math.min(window.innerWidth, window.innerHeight);
-  CONTAINER.style.width = size + 'px';
-  CONTAINER.style.height = size + 'px';
-}
-resize();
-window.addEventListener('resize', resize);
