@@ -4,6 +4,14 @@
   <meta charset="UTF-8">
   <title>Démo heatmap</title>
   <style>
+    /**
+     * Les filtres pour la heatmap sont ajoutés à la fin du body, pour s'assurer
+     * que le SVG définissant le filtre soit bien déjà dans le DOM.
+     */
+
+    /**
+     * Nuage de point :
+     */
     body,
     #app {
       margin: 0;
@@ -40,15 +48,9 @@
       background: white;
     }
 
-    /* HEATMAP FILTERS */
-    .point {
-      filter: blur(10px);
-    }
-    #points {
-      filter: url('#posterize') blur(1px);
-    }
-
-    /* CAPTIONS */
+    /**
+     * Légende :
+     */
     .caption {
       height: 2px;
       background: white;
@@ -105,17 +107,32 @@
   </div>
   <div id="app">
     <div id="caption-x" class="caption">
-      <span class="text">Percent of your day focused on design?</span>
+      <span class="text">Part de votre journée dédiée au design ?</span>
       <span class="text left">0%</span>
       <span class="text right">100%</span>
     </div>
     <div id="caption-y" class="caption">
-      <span class="text">Percent of your day focused on data prep work?</span>
+      <span class="text">Part de votre journée dédiée à la préparation des données ?</span>
       <span class="text left">0%</span>
       <span class="text right">100%</span>
     </div>
     <div id="points"></div>
   </div>
   <script type="text/javascript" src="./build/bundle.js"></script>
+  <style>
+    /**
+     * Filtres pour la heatmap :
+     */
+    .point {
+      filter: blur(10px);
+    }
+    #points {
+      /**
+       * Le filtre #posterize choisit un niveau de gris parmi 4 pour chaque
+       * pixel. Le blur(1px) sert ici d'anti-aliasing.
+       */
+      filter: url('#posterize') blur(1px);
+    }
+  </style>
 </body>
 </html>
