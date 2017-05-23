@@ -8,9 +8,10 @@
     "start": "kotatsu serve src/index.js"
   },
   "devDependencies": {
-    "kotatsu": "^0.15.0"
+    "kotatsu": "^0.15.2"
   },
   "dependencies": {
-    "three": "^0.84.0"
+    "three": "^0.84.0",
+    "three-orbit-controls": "^82.1.0"
   }
 }
