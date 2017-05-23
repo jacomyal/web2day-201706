@@ -1590,7 +1590,7 @@ kind-of@^3.0.2:
   dependencies:
     is-buffer "^1.1.5"
 
-kotatsu@^0.15.0:
+kotatsu@^0.15.2:
   version "0.15.2"
   resolved "https://registry.yarnpkg.com/kotatsu/-/kotatsu-0.15.2.tgz#c5958770c55ab26d9a058a772d353a6d2a1cb924"
   dependencies:

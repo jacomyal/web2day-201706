@@ -5,10 +5,10 @@
   "author": "Alexis Jacomy",
   "license": "MIT",
   "scripts": {
-    "start": "kotatsu serve src/index.js --index src/index.html",
-    "build": "kotatsu build client src/index.js --minify true --source-maps false --index src/index.html --output build/main.js"
+    "start": "kotatsu serve src/index.js --index ./index.html",
+    "build": "kotatsu build client src/index.js --minify --es2015 --no-source-maps --index src/index.html --output build/bundle.js"
   },
   "devDependencies": {
-    "kotatsu": "^0.15.0"
+    "kotatsu": "^0.15.2"
   }
 }
