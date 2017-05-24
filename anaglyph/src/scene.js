@@ -4,8 +4,12 @@ import { ORIGIN, SIZE, VIEW_DISTANCE } from './consts';
 const DATA = Array(Math.floor(20 * Math.random()) + 2)
   .join('.')
   .split('.')
-  .map(() => Math.random())
-  .sort((a, b) => b - a);
+  .map((_, i) => ({
+    value: Math.random(),
+    label: 'Valeur ' + i,
+    color: '#' + ((1 << 24) * Math.random() | 0).toString(16),
+  }))
+  .sort((a, b) => b.value - a.value);
 
 // Initialize scene:
 const scene = new THREE.Scene();
@@ -20,17 +24,15 @@ ambientLight.position.set(VIEW_DISTANCE , 0 , VIEW_DISTANCE );
 scene.add(ambientLight);
 
 // Add pie chart:
-const total = DATA.reduce((a, b) => a + b);
+const total = DATA.map(a => a.value).reduce((a, b) => a + b);
 
 let acc = Math.PI * 3 / 4;
-DATA.forEach(val => {
-  const angle = 2 * Math.PI * val / total;
+DATA.forEach(({ value, color }) => {
+  const angle = 2 * Math.PI * value / total;
   const dx = 2 * Math.cos(acc + angle / 2);
   const dy = 2 * Math.sin(acc + angle / 2);
 
-  const material = new THREE.MeshPhongMaterial({
-    color: '#' + ((1 << 24) * Math.random() | 0).toString(16),
-  });
+  const material = new THREE.MeshPhongMaterial({ color });
 
   const geometry = new THREE.Shape();
   geometry.moveTo(dx, dy);
@@ -40,7 +42,7 @@ DATA.forEach(val => {
   const extruded = new THREE.ExtrudeGeometry(
     geometry,
     {
-      amount: val * SIZE,
+      amount: value * SIZE,
       bevelEnabled: false,
       curveSegments: 50,
       steps: 2,
