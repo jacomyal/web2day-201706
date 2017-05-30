@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { ORIGIN, SIZE, VIEW_DISTANCE } from './consts';
+import { ORIGIN, SIZE, FOCAL } from './consts';
 
 const DATA = Array(Math.floor(20 * Math.random()) + 2)
   .join('.')
@@ -13,14 +13,15 @@ const DATA = Array(Math.floor(20 * Math.random()) + 2)
 
 // Initialize scene:
 const scene = new THREE.Scene();
+scene.background = new THREE.Color(0xffffff);
 
 const light = new THREE.SpotLight();
 light.castShadow = true;
-light.position.set(0 , VIEW_DISTANCE , VIEW_DISTANCE );
+light.position.set(0, FOCAL, FOCAL );
 scene.add(light);
 
 const ambientLight = new THREE.PointLight(0x123456);
-ambientLight.position.set(VIEW_DISTANCE , 0 , VIEW_DISTANCE );
+ambientLight.position.set(FOCAL, 0, FOCAL );
 scene.add(ambientLight);
 
 // Add pie chart:
@@ -29,8 +30,8 @@ const total = DATA.map(a => a.value).reduce((a, b) => a + b);
 let acc = Math.PI * 3 / 4;
 DATA.forEach(({ value, color }) => {
   const angle = 2 * Math.PI * value / total;
-  const dx = 2 * Math.cos(acc + angle / 2);
-  const dy = 2 * Math.sin(acc + angle / 2);
+  const dx = 30 * Math.cos(acc + angle / 2);
+  const dy = 30 * Math.sin(acc + angle / 2);
 
   const material = new THREE.MeshPhongMaterial({ color });
 

@@ -1,7 +1,7 @@
 import { WebGLRenderer, PerspectiveCamera, Vector3 } from 'three';
 import scene from './scene'
 import wrapAnaglyph from './anaglyph'
-import { CENTER, ORIGIN, VIEW_DISTANCE } from './consts';
+import { CENTER, ORIGIN, FOCAL } from './consts';
 
 // No body scrolling:
 document.body.style.overflow = 'hidden';
@@ -47,9 +47,9 @@ _resize();
 function _moveCamera() {
   const t = +Date.now() * 2 * Math.PI / 5000;
   const direction = new Vector3(
-    VIEW_DISTANCE * Math.cos(Math.cos(t) / 2 + Math.PI / 4),
-    VIEW_DISTANCE * Math.sin(Math.cos(t) / 2 + Math.PI / 4),
-    VIEW_DISTANCE * Math.cos(Math.cos(t) / 2)
+    FOCAL * Math.cos(Math.cos(t) / 2 + Math.PI / 4),
+    FOCAL * Math.sin(Math.cos(t) / 2 + Math.PI / 4),
+    FOCAL * Math.cos(Math.cos(t) / 2)
   );
   const position = CENTER.clone().add(direction);
 

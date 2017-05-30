@@ -1,26 +1,35 @@
 import * as THREE from 'three';
+import { FOCAL } from './consts';
 
 /**
- * Code shamelessly copied from:
- * https://threejs.org/examples/webgl_effects_anaglyph.html
+ * Just a bit tweaked from the original code at:
+ * http://math.hws.edu/graphicsbook/source/threejs/AnaglyphEffect.js
+ *
+ * Only differences:
+ *   - Code styling
+ *   - Using our focal length instead of the hardcoded one
+ *
+ * Original code mentions:
+ * @author mrdoob / http://mrdoob.com/
+ * @author marklundin / http://mark-lundin.com/
+ * @author alteredq / http://alteredqualia.com/
  */
-export default function(renderer, width = 512, height = 512) {
-  this.colorMatrixLeft = new THREE.Matrix3().fromArray([
-     1.0671679973602295,   -0.0016435992438346148,    0.0001777536963345483,
-    -0.028107794001698494, -0.00019593400065787137,  -0.0002875397040043026,
-    -0.04279090091586113,   0.000015809757314855233, -0.00024287120322696865,
-  ]);
 
-  this.colorMatrixRight = new THREE.Matrix3().fromArray([
-    -0.0355340838432312,    -0.06440307199954987, 0.018319187685847282,
-    -0.10269022732973099,    0.8079727292060852,  -0.04835830628871918,
-     0.0001224992738571018, -0.009558862075209618, 0.567823588848114,
-  ]);
+export default function (renderer, width, height) {
+  const eyeRight = new THREE.Matrix4();
+  const eyeLeft = new THREE.Matrix4();
+  const focalLength = FOCAL;
+  let _aspect, _near, _far, _fov;
 
-  const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
-  const scene = new THREE.Scene();
-  const stereo = new THREE.StereoCamera();
-  const params = {
+  const _cameraL = new THREE.PerspectiveCamera();
+  _cameraL.matrixAutoUpdate = false;
+
+  const _cameraR = new THREE.PerspectiveCamera();
+  _cameraR.matrixAutoUpdate = false;
+
+  const _camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+  const _scene = new THREE.Scene();
+  const _params = {
     minFilter: THREE.LinearFilter,
     magFilter: THREE.NearestFilter,
     format: THREE.RGBAFormat,
@@ -29,89 +38,138 @@ export default function(renderer, width = 512, height = 512) {
   if (width === undefined) width = 512;
   if (height === undefined) height = 512;
 
-  const renderTargetL = new THREE.WebGLRenderTarget(width, height, params);
-  const renderTargetR = new THREE.WebGLRenderTarget(width, height, params);
-
-  const material = new THREE.ShaderMaterial({
+  let _renderTargetL = new THREE.WebGLRenderTarget(width, height, _params);
+  let _renderTargetR = new THREE.WebGLRenderTarget(width, height, _params);
+  const _material = new THREE.ShaderMaterial({
     uniforms: {
-      mapLeft: { value: renderTargetL.texture },
-      mapRight: { value: renderTargetR.texture },
-      colorMatrixLeft: { value: this.colorMatrixLeft },
-      colorMatrixRight: { value: this.colorMatrixRight },
+      mapLeft: { type: 't', value: _renderTargetL },
+      mapRight: { type: 't', value: _renderTargetR },
     },
+
     vertexShader: `
       varying vec2 vUv;
+
       void main() {
         vUv = vec2(uv.x, uv.y);
         gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
       }
     `,
+
+    // Using "Optimized Anaglyphs" from:
+    // http://3dtv.at/Knowhow/AnaglyphComparison_en.aspx
     fragmentShader: `
       uniform sampler2D mapLeft;
       uniform sampler2D mapRight;
       varying vec2 vUv;
 
-      uniform mat3 colorMatrixLeft;
-      uniform mat3 colorMatrixRight;
-
-      float lin(float c) {
-        return c <= 0.04045 ?
-          c * 0.0773993808 :
-          pow(c * 0.9478672986 + 0.0521327014, 2.4);
-      }
-
-      vec4 lin(vec4 c) {
-        return vec4(lin(c.r), lin(c.g), lin(c.b), c.a);
-      }
-
-      float dev(float c) {
-        return c <= 0.0031308 ?
-          c * 12.92 :
-          pow(c, 0.41666) * 1.055 - 0.055;
-      }
-
       void main() {
+        vec4 colorL, colorR;
         vec2 uv = vUv;
-        vec4 colorL = lin(texture2D(mapLeft, uv));
-        vec4 colorR = lin(texture2D(mapRight, uv));
-        vec3 color = clamp(
-          colorMatrixLeft * colorL.rgb + colorMatrixRight * colorR.rgb,
-          0.,
-          1.
-        );
+
+        colorL = texture2D(mapLeft, uv);
+        colorR = texture2D(mapRight, uv);
+
         gl_FragColor = vec4(
-          dev(color.r), dev(color.g), dev(color.b),
-          max(colorL.a, colorR.a));
+          colorL.g * 0.7 + colorL.b * 0.3,
+          colorR.g,
+          colorR.b,
+          colorL.a + colorR.a
+        );
       }
     `,
   });
 
-  const mesh = new THREE.Mesh(new THREE.PlaneBufferGeometry(2, 2), material);
-  scene.add(mesh);
+  const mesh = new THREE.Mesh(
+    new THREE.PlaneBufferGeometry(2, 2),
+    _material
+  );
+  _scene.add(mesh);
 
   this.setSize = function(width, height) {
+    if (_renderTargetL) _renderTargetL.dispose();
+    if (_renderTargetR) _renderTargetR.dispose();
+
+    _renderTargetL = new THREE.WebGLRenderTarget(width, height, _params);
+    _renderTargetR = new THREE.WebGLRenderTarget(width, height, _params);
+
+    _material.uniforms.mapLeft.value = _renderTargetL;
+    _material.uniforms.mapRight.value = _renderTargetR;
+
     renderer.setSize(width, height);
-
-    const pixelRatio = renderer.getPixelRatio();
-
-    renderTargetL.setSize(width * pixelRatio, height * pixelRatio);
-    renderTargetR.setSize(width * pixelRatio, height * pixelRatio);
   };
 
+  /*
+   * Renderer now uses an asymmetric perspective projection
+   * (http://paulbourke.net/miscellaneous/stereographics/stereorender/).
+   *
+   * Each camera is offset by the eye seperation and its projection matrix is
+   * also skewed asymetrically back to converge on the same projection plane.
+   * Added a focal length parameter to, this is where the parallax is equal to 0.
+   */
   this.render = function(scene, camera) {
     scene.updateMatrixWorld();
 
-    if (camera.parent === null) camera.updateMatrixWorld();
+    if (camera.parent === undefined) camera.updateMatrixWorld();
 
-    stereo.update(camera);
+    const hasCameraChanged =
+      (_aspect !== camera.aspect)
+      || (_near !== camera.near)
+      || (_far !== camera.far)
+      || (_fov !== camera.fov);
 
-    renderer.render(scene, stereo.cameraL, renderTargetL, true);
-    renderer.render(scene, stereo.cameraR, renderTargetR, true);
-    renderer.render(scene, camera);
+    if (hasCameraChanged) {
+      _aspect = camera.aspect;
+      _near = camera.near;
+      _far = camera.far;
+      _fov = camera.fov;
+
+      const projectionMatrix = camera.projectionMatrix.clone();
+      const eyeSep = focalLength / 30 * 0.5;
+      const eyeSepOnProjection = eyeSep * _near / focalLength;
+      const ymax = _near * Math.tan(THREE.Math.degToRad(_fov * 0.5));
+      let xmin, xmax;
+
+      // translate xOffset
+      eyeRight.elements[12] = eyeSep;
+      eyeLeft.elements[12] = -eyeSep;
+
+      // for left eye
+      xmin = -ymax * _aspect + eyeSepOnProjection;
+      xmax = ymax * _aspect + eyeSepOnProjection;
+
+      projectionMatrix.elements[0] = 2 * _near / (xmax - xmin);
+      projectionMatrix.elements[8] = (xmax + xmin) / (xmax - xmin);
+
+      _cameraL.projectionMatrix.copy(projectionMatrix);
+
+      // for right eye
+      xmin = -ymax * _aspect - eyeSepOnProjection;
+      xmax = ymax * _aspect - eyeSepOnProjection;
+
+      projectionMatrix.elements[0] = 2 * _near / (xmax - xmin);
+      projectionMatrix.elements[8] = (xmax + xmin) / (xmax - xmin);
+
+      _cameraR.projectionMatrix.copy(projectionMatrix);
+    }
+
+    _cameraL.matrixWorld.copy(camera.matrixWorld).multiply(eyeLeft);
+    _cameraL.position.copy(camera.position);
+    _cameraL.near = camera.near;
+    _cameraL.far = camera.far;
+
+    renderer.render(scene, _cameraL, _renderTargetL, true);
+
+    _cameraR.matrixWorld.copy(camera.matrixWorld).multiply(eyeRight);
+    _cameraR.position.copy(camera.position);
+    _cameraR.near = camera.near;
+    _cameraR.far = camera.far;
+
+    renderer.render(scene, _cameraR, _renderTargetR, true);
+    renderer.render(_scene, _camera);
   };
 
   this.dispose = function() {
-    if (renderTargetL) renderTargetL.dispose();
-    if (renderTargetR) renderTargetR.dispose();
+    if (_renderTargetL) _renderTargetL.dispose();
+    if (_renderTargetR) _renderTargetR.dispose();
   };
 };
