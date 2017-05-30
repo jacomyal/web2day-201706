@@ -1,6 +1,6 @@
 import { WebGLRenderer, PerspectiveCamera, Vector3 } from 'three';
 import scene from './scene'
-import wraopAnaglyph from './anaglyph'
+import wrapAnaglyph from './anaglyph'
 import { CENTER, ORIGIN, VIEW_DISTANCE } from './consts';
 
 // No body scrolling:
@@ -23,22 +23,21 @@ camera.up.set(0, 0, 1);
 scene.add(camera);
 
 // Initialize anaglyph effect:
-const effect = new wraopAnaglyph(renderer);
+const effect = new wrapAnaglyph(renderer);
 
 // Deal with rendering:
 function _render() {
-  renderer.clear();
-  renderer.render(scene, camera);
+  effect.render(scene, camera);
 }
 
 // Deal with autoresize:
 function _resize() {
   const width = container.offsetWidth;
   const height = container.offsetHeight;
-  renderer.setSize(width, height);
-  effect.setSize(width, height);
   camera.aspect = width / height;
   camera.updateProjectionMatrix();
+
+  effect.setSize(width, height);
   _render();
 }
 window.addEventListener('resize', _resize);
