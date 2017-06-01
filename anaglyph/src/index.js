@@ -47,9 +47,9 @@ _resize();
 function _moveCamera() {
   const t = +Date.now() * 2 * Math.PI / 5000;
   const direction = new Vector3(
-    FOCAL * Math.cos(Math.cos(t) / 2 + Math.PI / 4),
-    FOCAL * Math.sin(Math.cos(t) / 2 + Math.PI / 4),
-    FOCAL * Math.cos(Math.cos(t) / 2)
+    FOCAL * Math.cos(t),
+    -FOCAL * Math.sin(t),
+    FOCAL
   );
   const position = CENTER.clone().add(direction);
 
