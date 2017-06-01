@@ -15,7 +15,7 @@ const COLORS = [
 
 const DATA = COLORS
   .map((color, i) => ({
-    value: Math.random(),
+    value: 1 + Math.random(),
     label: 'Valeur ' + i,
     color,
   }))
@@ -54,7 +54,7 @@ DATA.forEach(({ value, color, label }) => {
   const extruded = new THREE.ExtrudeGeometry(
     geometry,
     {
-      amount: value * SIZE,
+      amount: value * SIZE / 2,
       bevelEnabled: false,
       curveSegments: 50,
       steps: 2,
@@ -74,7 +74,7 @@ DATA.forEach(({ value, color, label }) => {
   text.position.set(
     SIZE * Math.cos(acc + angle / 2),
     SIZE * Math.sin(acc + angle / 2),
-    value * SIZE + 50
+    value * SIZE / 2 + 50
   );
   scene.add(text);
 
