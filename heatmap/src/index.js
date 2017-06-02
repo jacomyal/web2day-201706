@@ -13,3 +13,9 @@ DATA.forEach(([ vx, vy ]) => {
 
   POINTS.appendChild(point);
 });
+
+// Change la classe du container pour activer / désactiver les effets :
+window.setInterval(
+  () => POINTS.classList.toggle('effects'),
+  2000
+);

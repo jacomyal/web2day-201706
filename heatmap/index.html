@@ -116,17 +116,17 @@
       <span class="text left">0%</span>
       <span class="text right">100%</span>
     </div>
-    <div id="points"></div>
+    <div id="points" class="effects"></div>
   </div>
   <script type="text/javascript" src="./build/bundle.js"></script>
   <style>
     /**
      * Filtres pour la heatmap :
      */
-    .point {
+    #points.effects .point {
       filter: blur(10px);
     }
-    #points {
+    #points.effects {
       /**
        * Le filtre #posterize choisit un niveau de gris parmi 4 pour chaque
        * pixel. Le blur(1px) sert ici d'anti-aliasing.
