@@ -9,7 +9,7 @@ document.body.style.margin = 0;
 document.body.style.padding = 0;
 
 // Initialize DOM container:
-const container = document.getElementById('app');
+const container = document.getElementById('three-container');
 container.style.position = 'absolute';
 ['top', 'left', 'right', 'bottom'].forEach(str => container.style[str] = 0);
 

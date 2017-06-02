@@ -3,9 +3,31 @@
 <head>
   <title>Démo anaglyphe</title>
   <meta charset="UTF-8">
+  <style type="text/css">
+    #title {
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 60px;
+      position: absolute;
+      text-align: center;
+      font-family: sans-serif;
+      z-index: 1;
+    }
+    #app {
+      top: 60px;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      position: absolute;
+    }
+  </style>
 </head>
 <body>
-  <div id="app"></div>
+  <h1 id="title">Nombre de résultats Google par recherche</h1>
+  <div id="app">
+    <div id="three-container"></div>
+  </div>
   <script type="text/javascript" src="./build/bundle.js"></script>
 </body>
 </html>

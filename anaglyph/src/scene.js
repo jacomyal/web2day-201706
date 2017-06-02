@@ -13,13 +13,33 @@ const COLORS = [
   '#abffc6',
 ];
 
-const DATA = COLORS
-  .map((color, i) => ({
-    value: 1 + Math.random(),
-    label: 'Valeur ' + i,
-    color,
-  }))
-  .sort((a, b) => b.value - a.value);
+const DATA = [
+  {
+    label: 'webgl',
+    value: 5330000,
+  },
+  {
+    label: 'd3.js',
+    value: 13900000,
+  },
+  {
+    label: 'nantes',
+    value: 99800000,
+  },
+  {
+    label: 'camembert',
+    value: 14700000,
+  },
+  {
+    label: 'web2day',
+    value: 93200,
+  },
+].map(({ label, value }, i) => ({
+  value,
+  label,
+  color: COLORS[i % COLORS.length],
+}))
+.sort((a, b) => b.value - a.value);
 
 // Initialize scene:
 const scene = new THREE.Scene();
@@ -35,6 +55,7 @@ ambientLight.position.set(FOCAL, 0, FOCAL);
 scene.add(ambientLight);
 
 // Add pie chart:
+const max = Math.max(...DATA.map(a => a.value));
 const total = DATA.map(a => a.value).reduce((a, b) => a + b);
 let acc = Math.PI * 3 / 4;
 
@@ -53,7 +74,7 @@ DATA.forEach(({ value, color, label }) => {
 
   const extruded = new THREE.ExtrudeGeometry(
     geometry,
-    { amount: value * SIZE / 2 }
+    { amount: value * SIZE / max }
   );
 
   const slice = new THREE.Mesh(extruded, material);
@@ -64,7 +85,7 @@ DATA.forEach(({ value, color, label }) => {
   text.position.set(
     SIZE * Math.cos(acc + angle / 2),
     SIZE * Math.sin(acc + angle / 2),
-    value * SIZE / 2 + 50
+    value * SIZE / max + 50
   );
   scene.add(text);
 
