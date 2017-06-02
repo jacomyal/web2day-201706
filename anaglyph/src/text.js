@@ -3,7 +3,6 @@ import * as THREE from 'three';
 // Source:
 // https://github.com/deathbearbrown/learning-three-js-blogpost
 export function makeTextSprite(message, opts = {}) {
-  const position = opts.position;
   const fontFace = opts.fontFace || 'sans-serif';
   const fontSize = opts.fontSize || 30;
 
@@ -25,15 +24,12 @@ export function makeTextSprite(message, opts = {}) {
 
   // Use canvas content as THREE texture:
   const texture = new THREE.Texture(canvas);
-  texture.minFilter = THREE.LinearFilter;
   texture.needsUpdate = true;
 
   const spriteMaterial = new THREE.SpriteMaterial({
     map: texture,
   });
 
-  const width = metrics.width / 2;
-  const height = fontSize / 2;
   const sprite = new THREE.Sprite(spriteMaterial);
   sprite.scale.set(metrics.width / 2, fontSize / 2, 1);
 

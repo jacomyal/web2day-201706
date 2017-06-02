@@ -53,18 +53,8 @@ DATA.forEach(({ value, color, label }) => {
 
   const extruded = new THREE.ExtrudeGeometry(
     geometry,
-    {
-      amount: value * SIZE / 2,
-      bevelEnabled: false,
-      curveSegments: 50,
-      steps: 2,
-    }
+    { amount: value * SIZE / 2 }
   );
-  extruded.dynamic = true
-  extruded.verticesNeedUpdate = true;
-  extruded.normalsNeedUpdate = true;
-  extruded.computeFaceNormals();
-  extruded.computeBoundingSphere();
 
   const slice = new THREE.Mesh(extruded, material);
   scene.add(slice);
