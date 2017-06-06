@@ -74,7 +74,7 @@ DATA.forEach(({ value, color, label }) => {
 
   const extruded = new THREE.ExtrudeGeometry(
     geometry,
-    { amount: value * SIZE / max }
+    { amount: value * SIZE / 2 / max + SIZE / 2 }
   );
 
   const slice = new THREE.Mesh(extruded, material);
@@ -85,7 +85,7 @@ DATA.forEach(({ value, color, label }) => {
   text.position.set(
     SIZE * Math.cos(acc + angle / 2),
     SIZE * Math.sin(acc + angle / 2),
-    value * SIZE / max + 50
+    value * SIZE / 2 / max + SIZE / 2 + 50
   );
   scene.add(text);
 

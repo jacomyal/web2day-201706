@@ -18,7 +18,7 @@ import { FOCAL } from './consts';
 export default function (renderer, width, height) {
   const eyeRight = new THREE.Matrix4();
   const eyeLeft = new THREE.Matrix4();
-  const focalLength = FOCAL;
+  const focalLength = FOCAL * 1.5;
   let _aspect, _near, _far, _fov;
 
   const _cameraL = new THREE.PerspectiveCamera();
